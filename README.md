@@ -1,94 +1,306 @@
-# Obsidian Sample Plugin
+# Pebbledash Dashboards for Obsidian
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+Create beautiful, resizable dashboards to display your vault content in tiled layouts.
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+![Obsidian](https://img.shields.io/badge/Obsidian-1.0.0+-purple)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+## Features
 
-## First time developing plugins?
+- **Tiled Dashboards**: Arrange any vault content in resizable tiles
+- **View/Edit Modes**: Read-only view mode and interactive edit mode for layout changes
+- **Native Obsidian Embedding**: Display markdown, images, PDFs, canvas files, and more
+- **Nested Dashboards**: Embed dashboards within dashboards (up to 3 levels deep)
+- **Flexible Settings**: Three-tier settings cascade (vault → dashboard → tile)
+- **Drag and Drop**: Drag files from the file explorer onto tiles
+- **Mobile Support**: Full touch support on iOS and Android
 
-Quick starting guide for new plugin devs:
+## Installation
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+### From Obsidian Community Plugins (Recommended)
 
-## Releasing new releases
+1. Open **Settings → Community plugins**
+2. Select **Browse** and search for "Pebbledash Dashboards"
+3. Select **Install**, then **Enable**
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+### Manual Installation
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+1. Download `main.js`, `manifest.json`, and `styles.css` from the latest release
+2. Create a folder: `<vault>/.obsidian/plugins/obsidian-pebbledash/`
+3. Copy the downloaded files into that folder
+4. Restart Obsidian
+5. Enable the plugin in **Settings → Community plugins**
 
-## Adding your plugin to the community plugin list
+## Quick Start
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+### Creating a Dashboard
 
-## How to use
+1. Click the dashboard icon in the left ribbon, or
+2. Use the command palette: **Pebbledash: Create new dashboard**, or
+3. Right-click a folder → **New dashboard here**
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+### Adding Content to Tiles
 
-## Manually installing the plugin
+- **Drag and drop**: Drag any file from the file explorer onto a tile
+- **Right-click menu**: Right-click a tile → **Set content...**
+- **Double-click**: Double-click an empty tile to open the file picker
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+### Editing the Layout
 
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint ./src/`
+1. Right-click any tile → **Edit dashboard** (or use command palette)
+2. Choose a mode:
+   - **Insert mode**: Click tile edges to split and create new tiles
+   - **Resize mode**: Drag tile edges to resize
+3. When finished, click **Save and exit** in the toolbar
 
-## Funding URL
+## Dashboard File Format
 
-You can include funding URLs where people who use your plugin can financially support it.
+Dashboards are stored as `.dash` files containing YAML. Example:
 
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
+```yaml
+settings:
+  gutter: 8
+  showHeaders: true
+  linkBehavior: new-tab
 
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
+version: 2
+tiles:
+  - id: tile-1
+    x: 0
+    y: 0
+    width: 50
+    height: 100
+    meta:
+      widgetType: embedded
+      contentRef: Notes/Welcome.md
+  - id: tile-2
+    x: 50
+    y: 0
+    width: 50
+    height: 100
+    meta:
+      widgetType: embedded
+      contentRef: Assets/photo.png
+```
+
+## Configuration
+
+### Vault Settings
+
+Configure default settings for all dashboards in **Settings → Pebbledash Dashboards**:
+
+| Setting | Description | Default |
+|---------|-------------|---------|
+| Minimum tile width/height | Smallest tile size (%) | 10% |
+| Maximum tile width/height | Largest tile size (%) | 100% |
+| Gutter | Gap between tiles (px) | 4 |
+| Border width/style/color | Tile border appearance | 1px solid |
+| Show tile headers | Display filename headers | On |
+| Content overflow | scroll / clip / fit | clip |
+| Link behavior | new-tab / replace-dashboard / replace-tile | new-tab |
+| Content interaction | always / double-click / never | always |
+| Enable animations | Animate tile transitions | On |
+| Animation duration | Transition speed (ms) | 200 |
+| Seamless nested dashboards | Remove borders from nested dashboards | Off |
+| Redistribute equally | Proportional resize with Shift+drag | Off |
+
+### Dashboard Settings
+
+Override vault defaults for a specific dashboard:
+
+1. Right-click any tile → **Dashboard settings...**
+2. Adjust settings (they show "(vault default: X)" for reference)
+3. Use the reset button to revert to vault default
+
+### Tile Settings
+
+Override settings for individual tiles:
+
+1. Right-click a tile → **Tile settings...**
+2. Configure content, appearance, behavior, and size constraints
+3. Lock specific edges to prevent resizing
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| Create new dashboard | Create a new `.dash` file |
+| Toggle dashboard edit mode | Switch between view and edit modes |
+| Dashboard: Insert mode | Switch to insert sub-mode (in edit mode) |
+| Dashboard: Resize mode | Switch to resize sub-mode (in edit mode) |
+
+## Keyboard Shortcuts
+
+When a dashboard is focused:
+
+| Action | Shortcut |
+|--------|----------|
+| Undo | `Ctrl/Cmd + Z` |
+| Redo | `Ctrl/Cmd + Shift + Z` or `Ctrl + Y` |
+
+## Link Behavior
+
+Configure what happens when clicking links inside tiles:
+
+- **Open in new tab**: Opens the linked note in a new tab (dashboard stays open)
+- **Replace dashboard**: Navigates away from the dashboard to the linked note
+- **Replace tile**: Replaces the current tile's content with the linked note
+
+## Content Types
+
+Pebbledash supports embedding any file type that Obsidian can display:
+
+- Markdown notes (`.md`)
+- Images (`.png`, `.jpg`, `.gif`, `.svg`, etc.)
+- PDFs (`.pdf`)
+- Canvas files (`.canvas`)
+- Audio/Video files
+- Other dashboards (`.dash`) - creates nested dashboards
+- Any other file type with a registered embed handler
+
+## Nested Dashboards
+
+Embed dashboards within dashboards:
+
+1. Set a tile's content to another `.dash` file
+2. The nested dashboard renders in view-only mode
+3. Nesting is limited to 3 levels to prevent recursion
+
+**Seamless mode**: Enable "Seamless nested dashboards" to remove borders and make nested tiles blend with the parent layout.
+
+## CSS Customization
+
+### Global Styling
+
+Use CSS snippets to style all dashboards:
+
+```css
+/* All dashboards */
+.pebbledash-container { }
+
+/* All tiles */
+.pebbledash-dashboard .ud-tile-content { }
+
+/* Tile headers */
+.pebbledash-tile-header { }
+
+/* Empty tiles */
+.pebbledash-widget-empty { }
+```
+
+### Per-Dashboard Styling
+
+Add a custom CSS class in dashboard settings:
+
+```yaml
+settings:
+  cssclass: my-dark-dashboard
+```
+
+Then target it in your CSS snippet:
+
+```css
+.my-dark-dashboard .ud-tile-content {
+  background: var(--background-secondary);
 }
 ```
 
-If you have multiple URLs, you can also do:
+## Known Limitations
 
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
+- **No real-time file sync**: Tiles don't automatically update when source files change (reload dashboard to refresh)
+- **No graph widget**: Cannot embed the graph view in tiles
+- **No search/query widget**: Dataview-style queries are not built-in
+- **Nested dashboard editing**: Nested dashboards are view-only; edit the source file directly
+
+## Troubleshooting
+
+### Tiles not rendering
+
+1. Ensure the dashboard file is valid YAML
+2. Check the developer console for errors (`Ctrl/Cmd + Shift + I`)
+3. Try creating a new dashboard
+
+### File not found errors
+
+- The referenced file may have been moved or deleted
+- Right-click the tile → **Set content...** to select a new file
+
+### Resize not working
+
+- Ensure you're in **Edit mode** with **Resize sub-mode** selected
+- Check if the tile has locked edges in **Tile settings**
+- Tiles cannot be smaller than the minimum size setting
+
+## Development
+
+### Building from Source
+
+```bash
+# Install dependencies
+npm install
+
+# Development build (watch mode)
+npm run dev
+
+# Production build
+npm run build
+
+# Run tests
+npm test
+
+# Generate API documentation
+npm run docs
 ```
 
-## API Documentation
+### Project Structure
 
-See https://github.com/obsidianmd/obsidian-api
+```
+src/
+├── main.ts              # Plugin entry point (lifecycle only)
+├── constants.ts         # Constants and defaults
+├── types.ts             # TypeScript interfaces
+├── settings.ts          # Plugin settings tab
+├── settingDefinitions.ts # Centralized setting definitions
+├── settingsResolver.ts  # Settings cascade logic
+├── yamlAdapter.ts       # YAML serialization
+├── dashEmbed.ts         # Nested dashboard embedding
+├── fileTracker.ts       # File rename/delete tracking
+├── DashboardView/       # Dashboard view implementation
+│   ├── index.ts         # Main DashboardView class
+│   ├── toolbar.ts       # Edit mode toolbar
+│   ├── contextMenu.ts   # Right-click menus
+│   └── widgetBridge.ts  # Pebbledash widget integration
+├── modals/              # Modal dialogs
+│   ├── ConfirmModal.ts
+│   ├── DashboardSettingsModal.ts
+│   ├── TileSettingsModal.ts
+│   └── ...
+├── widgets/             # Widget implementations
+│   ├── EmptyWidget.ts
+│   ├── EmbeddedLeafWidget.ts
+│   └── embeddedWidget/  # Embedded widget sub-modules
+└── utils/               # Utility functions
+```
+
+## Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests: `npm test`
+5. Submit a pull request
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+## Credits
+
+- Powered by [@pebbledash/core](https://github.com/pebbledash/pebbledash) - headless dashboard engine
+- Built for [Obsidian](https://obsidian.md)
+
+---
+
+**Need help?** Open an issue on GitHub or check the [SPEC.md](SPEC.md) for detailed technical documentation.

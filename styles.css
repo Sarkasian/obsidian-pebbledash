@@ -1,8 +1,1003 @@
-/*
+/* Pebbledash Dashboard Plugin Styles */
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+/* ============================================
+   Container
+   ============================================ */
 
-If your plugin does not need CSS, delete this file.
+.pebbledash-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
 
-*/
+.pebbledash-dashboard {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================
+   CSS Variables (set via settingsResolver.ts)
+   ============================================ */
+
+.pebbledash-dashboard,
+.pebbledash-nested-dashboard {
+  /* Layout variables - can be overridden by dashboard settings */
+  --pebbledash-gutter: 4px;
+  --pebbledash-border-width: 1px;
+  --pebbledash-border-style: solid;
+  --pebbledash-border-color: var(--background-modifier-border);
+  --pebbledash-animation-duration: 200ms;
+  
+  /* Spacing variables (internal use) */
+  --pebbledash-content-padding: 12px 16px;
+  --pebbledash-header-padding: 6px 10px;
+  --pebbledash-border-radius: 4px;
+  
+  /* Z-index layering (internal use) */
+  --pebbledash-z-edge: 10;
+  --pebbledash-z-boundary: 12;
+  --pebbledash-z-overlay: 20;
+  --pebbledash-z-editing-indicator: 60;
+  --pebbledash-z-toolbar: 100;
+}
+
+/* ============================================
+   Tiles (base pebbledash overrides)
+   ============================================ */
+
+.pebbledash-dashboard .ud-tile,
+.pebbledash-nested-dashboard .ud-tile {
+  /* Tile background is transparent so gutter shows through */
+  /* Must use !important to override inline styles set by pebbledash core */
+  background: transparent !important;
+  overflow: visible !important;
+  /* No transition on tile container itself - animations on inner content */
+}
+
+/* Inner tile visual container - this is what users see as the "tile" */
+/* Apply to both top-level and nested dashboards using :is() for DRY selectors */
+:is(.pebbledash-dashboard, .pebbledash-nested-dashboard) .ud-tile-content {
+  /* Inset by half gutter on each side to create visual gap between tiles */
+  inset: calc(var(--pebbledash-gutter) / 2) !important;
+  background: var(--background-primary);
+  border: var(--pebbledash-border-width) var(--pebbledash-border-style) var(--pebbledash-border-color);
+  border-radius: var(--pebbledash-border-radius);
+  /* Default overflow hidden, but can be overridden by scroll class */
+  overflow: hidden;
+  transition: transform var(--pebbledash-animation-duration) ease-out,
+              opacity var(--pebbledash-animation-duration) ease-out;
+}
+
+/* ============================================
+   Overflow Modes (scroll, clip, fit)
+   Using :is() for consolidated selectors
+   ============================================ */
+
+/* Scroll mode - content can scroll within tile */
+:is(.pebbledash-dashboard, .pebbledash-nested-dashboard) .ud-tile-content.pebbledash-overflow-scroll {
+  overflow: auto !important;
+}
+
+:is(.pebbledash-dashboard, .pebbledash-nested-dashboard) .ud-tile-content.pebbledash-overflow-scroll .pebbledash-widget {
+  height: auto !important;
+  min-height: 100%;
+}
+
+/* Clip mode - content is clipped to tile bounds */
+:is(.pebbledash-dashboard, .pebbledash-nested-dashboard) .ud-tile-content.pebbledash-overflow-clip {
+  overflow: hidden !important;
+}
+
+:is(.pebbledash-dashboard, .pebbledash-nested-dashboard) .ud-tile-content.pebbledash-overflow-clip .pebbledash-widget {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Fit mode - content scales to fit within tile */
+:is(.pebbledash-dashboard, .pebbledash-nested-dashboard) .ud-tile-content.pebbledash-overflow-fit {
+  overflow: hidden !important;
+}
+
+:is(.pebbledash-dashboard, .pebbledash-nested-dashboard) .ud-tile-content.pebbledash-overflow-fit .pebbledash-widget {
+  height: 100%;
+  overflow: hidden;
+  position: relative; /* Allow absolute positioning of fit-wrapper children */
+}
+
+/* ============================================
+   Tile Headers
+   ============================================ */
+
+/* When tile has a header, use flexbox to allocate space properly */
+:is(.pebbledash-dashboard, .pebbledash-nested-dashboard) .ud-tile-content.pebbledash-has-header {
+  display: flex !important;
+  flex-direction: column;
+}
+
+/* Header keeps its natural size */
+:is(.pebbledash-dashboard, .pebbledash-nested-dashboard) .ud-tile-content.pebbledash-has-header > .pebbledash-tile-header {
+  flex-shrink: 0;
+}
+
+/* Widget fills remaining space */
+:is(.pebbledash-dashboard, .pebbledash-nested-dashboard) .ud-tile-content.pebbledash-has-header > .pebbledash-widget {
+  flex: 1;
+  height: auto !important; /* Override height: 100% */
+  min-height: 0; /* Allow flex item to shrink */
+}
+
+/* The fit wrapper is positioned absolutely and centered via transform */
+.pebbledash-fit-wrapper {
+  /* Position and transform set by JavaScript */
+  width: max-content;
+  height: max-content;
+}
+
+.pebbledash-tile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--pebbledash-header-padding);
+  background: var(--background-secondary);
+  border-bottom: 1px solid var(--background-modifier-border);
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+}
+
+.pebbledash-tile-header-title {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pebbledash-tile-content {
+  height: 100%;
+  /* overflow is controlled by individual widgets based on settings */
+}
+
+/* ============================================
+   Widgets
+   ============================================ */
+
+.pebbledash-widget {
+  width: 100%;
+  /* height controlled by overflow classes on parent */
+}
+
+/* Empty widget */
+.pebbledash-widget-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: var(--text-muted);
+  text-align: center;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.pebbledash-empty-icon {
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.pebbledash-empty-icon svg {
+  stroke: var(--text-muted);
+}
+
+.pebbledash-empty-text {
+  font-size: var(--font-ui-medium);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.pebbledash-empty-hint {
+  font-size: var(--font-ui-small);
+  opacity: 0.7;
+  max-width: 200px;
+}
+
+.pebbledash-widget-empty:hover {
+  background: var(--background-secondary);
+}
+
+/* Markdown widget */
+.pebbledash-widget-markdown {
+  padding: 12px 16px;
+  /* overflow controlled by parent .ud-tile-content classes */
+  box-sizing: border-box;
+}
+
+/* When scrolling, markdown widget shouldn't constrain height */
+.pebbledash-overflow-scroll .pebbledash-widget-markdown {
+  height: auto;
+  min-height: 100%;
+}
+
+/* When clipping, markdown widget should be constrained */
+.pebbledash-overflow-clip .pebbledash-widget-markdown {
+  height: 100%;
+  overflow: hidden;
+}
+
+.pebbledash-markdown-content {
+  /* Use Obsidian's markdown styles */
+}
+
+/* Style our internal links to look like Obsidian's internal links */
+.pebbledash-markdown-content .pebbledash-internal-link {
+  color: var(--link-color);
+  text-decoration-line: var(--link-decoration);
+  cursor: pointer;
+}
+
+.pebbledash-markdown-content .pebbledash-internal-link:hover {
+  color: var(--link-color-hover);
+  text-decoration-line: var(--link-decoration-hover);
+}
+
+/* Prevent Obsidian's page preview from showing on our internal links */
+.pebbledash-markdown-content a[data-pebbledash-internal] {
+  /* Disable page preview hover by blocking the events that trigger it */
+}
+
+/* Ensure tiles have proper sizing for content */
+.pebbledash-dashboard .ud-tile {
+  display: flex;
+  flex-direction: column;
+  /* Use gutter CSS variable for gap (applied via JavaScript on .ud-grid) */
+}
+
+/* Apply gutter to grid container if using CSS grid */
+.pebbledash-dashboard .ud-grid {
+  gap: var(--pebbledash-gutter);
+}
+
+/* Image widget */
+.pebbledash-widget-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.pebbledash-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Image fit mode - scale image to fit container */
+.pebbledash-image-fit {
+  overflow: hidden;
+}
+
+.pebbledash-image-fit .pebbledash-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Error state */
+.pebbledash-widget-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: var(--text-error);
+  text-align: center;
+}
+
+.pebbledash-error-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.pebbledash-error-message {
+  font-size: var(--font-ui-small);
+}
+
+/* ============================================
+   Edge overlays (pebbledash integration)
+   ============================================ */
+
+.pebbledash-dashboard .ud-edge {
+  position: absolute;
+  z-index: var(--pebbledash-z-edge);
+  pointer-events: auto;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+.pebbledash-dashboard .ud-edge:hover {
+  background: var(--interactive-accent);
+  opacity: 0.3;
+}
+
+.pebbledash-dashboard .ud-edge-vertical {
+  width: 8px;
+  margin-left: -4px;
+  cursor: ew-resize;
+}
+
+.pebbledash-dashboard .ud-edge-horizontal {
+  height: 8px;
+  margin-top: -4px;
+  cursor: ns-resize;
+}
+
+.pebbledash-dashboard .ud-edge.disabled {
+  pointer-events: none;
+  opacity: 0.2;
+}
+
+/* Insert mode cursors */
+.pebbledash-dashboard.mode-insert .ud-edge {
+  cursor: copy;
+}
+
+/* Resize mode cursors */
+.pebbledash-dashboard.mode-resize .ud-edge.disabled {
+  cursor: not-allowed;
+}
+
+/* Boundary highlights */
+.pebbledash-dashboard .ud-boundary {
+  position: absolute;
+  z-index: var(--pebbledash-z-boundary);
+  pointer-events: none;
+  background: var(--interactive-accent);
+  opacity: 0.2;
+}
+
+.pebbledash-dashboard .ud-boundary.active {
+  opacity: 0.5;
+}
+
+/* ============================================
+   View mode (locked) - hide all edit UI
+   ============================================ */
+
+.pebbledash-view-mode .ud-edge,
+.pebbledash-locked .ud-edge {
+  display: none !important;
+}
+
+.pebbledash-view-mode .ud-boundary,
+.pebbledash-locked .ud-boundary {
+  display: none !important;
+}
+
+/* ============================================
+   Edit mode
+   ============================================ */
+
+.pebbledash-edit-mode .pebbledash-widget-empty {
+  border: 2px dashed var(--background-modifier-border);
+  border-radius: 4px;
+  margin: 4px;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  box-sizing: border-box;
+}
+
+/* Show a subtle indicator that we're in edit mode */
+.pebbledash-edit-mode .pebbledash-dashboard {
+  background: var(--background-secondary-alt);
+}
+
+/* ============================================
+   Edit Mode Toolbar (floating)
+   ============================================ */
+
+.pebbledash-edit-toolbar {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: var(--pebbledash-z-toolbar);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.pebbledash-edit-toolbar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.pebbledash-edit-toolbar-btn:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.pebbledash-edit-toolbar-btn.is-active {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+.pebbledash-edit-toolbar-separator {
+  width: 1px;
+  height: 20px;
+  background: var(--background-modifier-border);
+  margin: 0 4px;
+}
+
+/* ============================================
+   Responsive / Mobile
+   ============================================ */
+
+@media (max-width: 768px) {
+  .pebbledash-dashboard .ud-edge-vertical {
+    width: 16px;
+    margin-left: -8px;
+  }
+
+  .pebbledash-dashboard .ud-edge-horizontal {
+    height: 16px;
+    margin-top: -8px;
+  }
+}
+
+/* ============================================
+   Reduced motion
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .pebbledash-dashboard .ud-edge,
+  .pebbledash-dashboard .ud-tile {
+    transition: none;
+  }
+}
+
+/* Disable animations when animation-duration is 0 */
+.pebbledash-dashboard[style*="--pebbledash-animation-duration: 0ms"] .ud-tile,
+.pebbledash-dashboard[style*="--pebbledash-animation-duration:0ms"] .ud-tile {
+  transition: none;
+}
+
+/* ============================================
+   Modals
+   ============================================ */
+
+.pebbledash-confirm-modal,
+.pebbledash-save-as-modal {
+  padding: 20px;
+}
+
+.pebbledash-confirm-modal h2,
+.pebbledash-save-as-modal h2 {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.pebbledash-confirm-modal p {
+  margin-bottom: 20px;
+  color: var(--text-muted);
+}
+
+.pebbledash-modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.pebbledash-modal-buttons button {
+  padding: 8px 16px;
+}
+
+/* ============================================
+   Settings Modal
+   ============================================ */
+
+/* Target the modal dialog box itself (modalEl) */
+.modal.pebbledash-settings-modal {
+  width: 620px !important;
+  max-width: 90vw !important;
+}
+
+/* Target the content area inside the modal */
+.pebbledash-settings-content {
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* Add padding to prevent focus shadows from being clipped */
+  padding: 4px 16px 4px 4px;
+  margin: -4px;
+  box-sizing: border-box;
+}
+
+/* Ensure setting items fit with room for focus shadows */
+.pebbledash-settings-content .setting-item {
+  max-width: calc(100% - 8px);
+  box-sizing: border-box;
+}
+
+.pebbledash-settings-content .setting-item-info {
+  min-width: 0;
+  flex: 1 1 auto;
+  max-width: 55%;
+}
+
+.pebbledash-settings-content .setting-item-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pebbledash-settings-content .setting-item-description {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  white-space: normal;
+}
+
+.pebbledash-settings-content .setting-item-control {
+  flex-shrink: 0;
+  max-width: 45%;
+}
+
+.pebbledash-settings-info {
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  background: var(--background-secondary);
+  border-radius: 4px;
+}
+
+.pebbledash-settings-modal h3 {
+  margin-top: 20px;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  font-size: var(--font-ui-medium);
+}
+
+.pebbledash-settings-modal h3:first-of-type {
+  margin-top: 0;
+}
+
+.pebbledash-settings-subsection {
+  margin-top: 12px !important;
+  margin-bottom: 8px !important;
+  font-size: var(--font-ui-small) !important;
+  font-weight: 500;
+  color: var(--text-muted);
+  border-bottom: none !important;
+}
+
+.pebbledash-settings-modal h4 {
+  margin-top: 12px;
+  margin-bottom: 8px;
+  font-size: var(--font-ui-small);
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* Reset button styling */
+.pebbledash-settings-modal .setting-item .extra-setting-button {
+  opacity: 0.5;
+}
+
+.pebbledash-settings-modal .setting-item:hover .extra-setting-button {
+  opacity: 1;
+}
+
+/* Locked zones checkboxes */
+.pebbledash-locked-zones {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pebbledash-locked-zone-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-ui-small);
+  cursor: pointer;
+}
+
+.pebbledash-locked-zone-label input[type="checkbox"] {
+  margin: 0;
+}
+
+/* Inherit indicator text */
+.pebbledash-inherit-indicator {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  margin-left: 8px;
+}
+
+/* ============================================
+   Embedded Widget (Native Editor)
+   ============================================ */
+
+.pebbledash-widget-embedded {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  /* overflow controlled by parent .ud-tile-content classes */
+}
+
+.pebbledash-embedded-content {
+  width: 100%;
+  min-height: 100%;
+  padding: 12px 16px;
+  box-sizing: border-box;
+  /* Inherit overflow from parent - controlled by pebbledash-overflow-* classes */
+}
+
+/* When scrolling, embedded content shouldn't constrain height */
+.pebbledash-overflow-scroll .pebbledash-embedded-content {
+  height: auto;
+}
+
+/* When clipping, embedded content should be constrained */
+.pebbledash-overflow-clip .pebbledash-embedded-content {
+  height: 100%;
+  overflow: hidden;
+}
+
+.pebbledash-embedded-content.is-hidden {
+  display: none;
+}
+
+/* Remove Obsidian's default embed border styling within tiles
+   but keep the left margin for visual spacing */
+.pebbledash-widget .internal-embed,
+.pebbledash-widget .markdown-embed,
+.pebbledash-embedded-content .internal-embed,
+.pebbledash-embedded-content .markdown-embed {
+  border-left: none;
+  /* Keep left padding for visual spacing (Obsidian default is usually ~1em) */
+  padding-left: 1em;
+}
+
+.pebbledash-widget .markdown-embed-content,
+.pebbledash-embedded-content .markdown-embed-content {
+  border-left: none;
+}
+
+.pebbledash-embedded-editor {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.pebbledash-embedded-editor.is-hidden {
+  display: none;
+}
+
+/* Native editor wrapper - needs Obsidian CSS classes */
+.pebbledash-embedded-editor.markdown-source-view {
+  background: var(--background-primary);
+}
+
+.pebbledash-embedded-editor .cm-editor {
+  height: 100%;
+}
+
+.pebbledash-embedded-editor .cm-scroller {
+  padding: 12px 16px;
+}
+
+/* Fallback textarea styling */
+.pebbledash-editor-textarea {
+  width: 100%;
+  height: 100%;
+  padding: 12px 16px;
+  border: none;
+  outline: none;
+  resize: none;
+  background: var(--background-primary);
+  color: var(--text-normal);
+  font-family: var(--font-monospace);
+  font-size: var(--font-text-size);
+  line-height: 1.6;
+  box-sizing: border-box;
+}
+
+.pebbledash-editor-textarea:focus {
+  outline: none;
+}
+
+.pebbledash-embedded-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+  margin: auto;
+}
+
+.pebbledash-embedded-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* Hide embed link button (maximize icon) when showEmbedLink is false */
+.pebbledash-hide-embed-link .markdown-embed-link {
+  display: none !important;
+}
+
+.pebbledash-placeholder-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.pebbledash-placeholder-text {
+  font-size: var(--font-ui-medium);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.pebbledash-placeholder-hint {
+  font-size: var(--font-ui-small);
+  opacity: 0.7;
+}
+
+/* Locked state - show hint on hover */
+.pebbledash-widget-embedded.is-locked {
+  cursor: pointer;
+}
+
+.pebbledash-widget-embedded.is-locked::before {
+  content: 'Double-click to edit';
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  padding: 4px 8px;
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: var(--pebbledash-z-edge);
+  pointer-events: none;
+}
+
+.pebbledash-widget-embedded.is-locked:hover::before {
+  opacity: 1;
+}
+
+/* Editing state - show visual indicator */
+.pebbledash-widget-embedded.is-editing {
+  box-shadow: inset 0 0 0 2px var(--interactive-accent);
+}
+
+.pebbledash-widget-embedded.is-editing::after {
+  content: 'Editing • Escape to exit';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  padding: 2px 8px;
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border-radius: 4px;
+  font-size: var(--font-ui-smaller);
+  z-index: var(--pebbledash-z-editing-indicator);
+  pointer-events: none;
+}
+
+/* ============================================
+   Drag and Drop
+   ============================================ */
+
+/* Drag over state for tiles */
+.pebbledash-widget.is-drag-over,
+.pebbledash-widget-empty.is-drag-over,
+.pebbledash-widget-embedded.is-drag-over {
+  outline: 2px dashed var(--interactive-accent);
+  outline-offset: -2px;
+  background: var(--background-modifier-hover);
+}
+
+/* Enhanced visual feedback for empty tiles during drag */
+.pebbledash-widget-empty.is-drag-over {
+  border-color: var(--interactive-accent);
+  background: var(--background-modifier-hover);
+}
+
+.pebbledash-widget-empty.is-drag-over .pebbledash-empty-icon svg {
+  stroke: var(--interactive-accent);
+}
+
+.pebbledash-widget-empty.is-drag-over .pebbledash-empty-text {
+  color: var(--interactive-accent);
+}
+
+/* Drop hint text change during drag */
+.pebbledash-widget-empty.is-drag-over .pebbledash-empty-hint::before {
+  content: 'Drop file here';
+  display: block;
+  color: var(--interactive-accent);
+  font-weight: 500;
+}
+
+.pebbledash-widget-empty.is-drag-over .pebbledash-empty-hint {
+  color: transparent;
+  position: relative;
+}
+
+.pebbledash-widget-empty.is-drag-over .pebbledash-empty-hint::before {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+/* ============================================
+   Dashboard Widget (Nested Dashboards)
+   ============================================ */
+
+.pebbledash-widget-dashboard {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.pebbledash-nested-dashboard {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: transparent;
+}
+
+/* Override core library's .ud-root background for nested dashboards */
+/* Core injects: .ud-root { background: var(--ud-bg); } which defaults to white */
+.pebbledash-nested-dashboard.ud-root {
+  background: transparent !important;
+}
+
+/* Nested dashboard tiles inherit normal tile styling from .ud-tile-content */
+/* No special styling needed - they use the same CSS variables as parent */
+
+/* ============================================
+   Seamless Nested Dashboards
+   ============================================ */
+
+/* Tile containing a seamless nested dashboard */
+.pebbledash-dashboard .ud-tile-content.pebbledash-seamless-nested {
+  /* Remove visual boundary - no border, no padding, no background */
+  border: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  /* Remove the gutter inset so nested dashboard fills entire tile */
+  inset: 0 !important;
+}
+
+/* Hide the header in seamless mode - the nested dashboard has its own headers */
+.pebbledash-dashboard .ud-tile-content.pebbledash-seamless-nested > .pebbledash-tile-header {
+  display: none !important;
+}
+
+/* The seamless embed container fills the entire tile */
+.pebbledash-dashboard .ud-tile-content.pebbledash-seamless-nested .pebbledash-dash-embed,
+.pebbledash-dashboard .ud-tile-content.pebbledash-seamless-nested .pebbledash-seamless {
+  position: absolute;
+  inset: 0;
+}
+
+/* Seamless nested dashboard container fills parent */
+.pebbledash-seamless .pebbledash-nested-dashboard {
+  width: 100%;
+  height: 100%;
+}
+
+/* In seamless mode, remove padding ONLY from the direct seamless container's embedded content,
+   NOT from the nested tiles' embedded content inside the nested dashboard. */
+.pebbledash-seamless-nested > .pebbledash-widget > .pebbledash-embedded-content {
+  padding: 0 !important;
+}
+
+/* Ensure nested tiles' embedded content HAS padding (override the above if it somehow cascades) */
+.pebbledash-nested-dashboard .pebbledash-embedded-content {
+  padding: 1em !important;  /* Standard content padding */
+}
+
+/* Ensure the widget fills the entire tile in seamless mode */
+.pebbledash-seamless-nested .pebbledash-widget-embedded {
+  width: 100%;
+  height: 100%;
+}
+
+/* Nested tiles MUST have proper gutter inset - override any inline styles */
+/* Use descendant selector and multiple !important to guarantee override */
+.pebbledash-nested-dashboard .ud-tile .ud-tile-content {
+  inset: calc(var(--pebbledash-gutter) / 2) !important;
+  background: var(--background-primary) !important;
+  border: var(--pebbledash-border-width) var(--pebbledash-border-style) var(--pebbledash-border-color) !important;
+  border-radius: 4px !important;
+}
+
+/* Also target without intermediate .ud-tile in case of structure variations */
+.pebbledash-nested-dashboard .ud-tile-content {
+  inset: calc(var(--pebbledash-gutter) / 2) !important;
+}
+
+/* Nested tiles - ensure proper gutter and styling */
+.pebbledash-nested-dashboard > .ud-tile {
+  background: transparent !important;  /* Transparent so gutter shows through */
+  overflow: visible !important;
+}
+.pebbledash-nested-dashboard > .ud-tile > .ud-tile-content {
+  inset: calc(var(--pebbledash-gutter) / 2) !important;
+  background: var(--background-primary) !important;
+  border: var(--pebbledash-border-width) var(--pebbledash-border-style) var(--pebbledash-border-color) !important;
+  border-radius: 4px !important;
+}
+
+/* Placeholder for dashboards without content */
+.pebbledash-dashboard-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 20px;
+}
+
+/* Depth limit error */
+.pebbledash-depth-limit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-warning);
+  text-align: center;
+  padding: 20px;
+  background: var(--background-modifier-error);
+  border-radius: 4px;
+}
+
+.pebbledash-depth-limit .pebbledash-error-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.pebbledash-depth-limit .pebbledash-error-message {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.pebbledash-depth-limit .pebbledash-error-hint {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+}
+
