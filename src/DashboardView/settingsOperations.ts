@@ -5,7 +5,7 @@
 
 import { App, Notice } from 'obsidian';
 import type { BaseDashboard } from '@pebbledash/renderer-dom';
-import type { TileId, DashFile, ObsidianTileMeta, PebbledashSettings, DashboardSettings } from '../types';
+import type { TileId, DashFile, ObsidianTileMeta, PebbledashSettings, DashboardSettings, TileConstraints } from '../types';
 import { DashboardSettingsModal, TileSettingsModal } from '../modals';
 import {
   resolveEffectiveDashboardConfig,
@@ -92,7 +92,7 @@ export function openTileSettings(ctx: SettingsOperationsContext, tileId: TileId)
     constraints: tile.constraints,
     vaultSettings: ctx.vaultSettings,
     dashboardSettings: ctx.dashFile.settings,
-    onSave: (meta: ObsidianTileMeta, constraints?: Record<string, number>) => {
+    onSave: (meta: ObsidianTileMeta, constraints?: TileConstraints) => {
       if (!ctx.dashFile) return;
       
       const tileIndex = ctx.dashFile.tiles.findIndex(t => t.id === tileId);

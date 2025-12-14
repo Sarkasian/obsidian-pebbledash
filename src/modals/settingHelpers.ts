@@ -221,7 +221,7 @@ export function cleanupEmptyNestedObjects<T extends object>(
 ): void {
   for (const key of keys) {
     const nested = obj[key];
-    if (nested && typeof nested === 'object' && Object.keys(nested as object).length === 0) {
+    if (nested && typeof nested === 'object' && Object.keys(nested as unknown as object).length === 0) {
       delete obj[key];
     }
   }

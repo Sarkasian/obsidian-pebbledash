@@ -115,7 +115,7 @@ export function refreshEmbeddedContentForFile(
     const widget = activeWidgets.get(tile.id as string);
     if (widget?.update) {
       // Trigger widget update to refresh content
-      widget.update(tile.meta || {});
+      widget.update(tile.meta || { widgetType: 'empty' });
     }
   }
 }

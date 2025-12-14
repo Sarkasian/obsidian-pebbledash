@@ -10,14 +10,14 @@ import {
   dashFileToSnapshot,
   snapshotToDashFile,
 } from '../yamlAdapter';
-import type { DashFile, DashTile } from '../types';
-import type { Snapshot, TileId } from '@pebbledash/core';
+import type { DashFile, DashTile, Snapshot } from '../types';
+import type { TileId } from '@pebbledash/core';
 
 describe('parseDashFile', () => {
   describe('valid content', () => {
     it('should parse a simple dashboard file', () => {
       const content = `
-version: 2
+version: 1
 tiles:
   - id: tile-1
     x: 0
@@ -37,7 +37,7 @@ tiles:
 `;
       const result = parseDashFile(content);
 
-      expect(result.version).toBe(2);
+      expect(result.version).toBe(1);
       expect(result.tiles).toHaveLength(2);
       expect(result.tiles[0].id).toBe('tile-1');
       expect(result.tiles[0].width).toBe(50);
@@ -47,7 +47,7 @@ tiles:
 
     it('should parse dashboard with settings', () => {
       const content = `
-version: 2
+version: 1
 settings:
   gutter: 8
   showHeaders: false
@@ -75,7 +75,7 @@ tiles:
 
     it('should handle tiles with all properties', () => {
       const content = `
-version: 2
+version: 1
 tiles:
   - id: tile-1
     x: 10
@@ -109,7 +109,7 @@ tiles:
     it('should return empty dashboard for empty string', () => {
       const result = parseDashFile('');
 
-      expect(result.version).toBe(2);
+      expect(result.version).toBe(1);
       expect(result.tiles).toHaveLength(1);
       expect(result.tiles[0].width).toBe(100);
     });
@@ -117,14 +117,14 @@ tiles:
     it('should return empty dashboard for null-like content', () => {
       const result = parseDashFile('null');
 
-      expect(result.version).toBe(2);
+      expect(result.version).toBe(1);
       expect(result.tiles).toHaveLength(1);
     });
 
     it('should return empty dashboard for non-object content', () => {
       const result = parseDashFile('just a string');
 
-      expect(result.version).toBe(2);
+      expect(result.version).toBe(1);
       expect(result.tiles).toBeDefined();
     });
 
@@ -139,12 +139,12 @@ tiles:
 `;
       const result = parseDashFile(content);
 
-      expect(result.version).toBe(2);
+      expect(result.version).toBe(1);
     });
 
     it('should create empty tiles array if missing', () => {
       const content = `
-version: 2
+version: 1
 settings:
   gutter: 8
 `;
@@ -158,7 +158,7 @@ settings:
 describe('serializeDashFile', () => {
   it('should serialize a dashboard file to YAML', () => {
     const dashFile: DashFile = {
-      version: 2,
+      version: 1,
       tiles: [
         {
           id: 'tile-1' as TileId,
@@ -173,7 +173,7 @@ describe('serializeDashFile', () => {
 
     const result = serializeDashFile(dashFile);
 
-    expect(result).toContain('version: 2');
+    expect(result).toContain('version: 1');
     expect(result).toContain('tiles:');
     expect(result).toContain('id: tile-1');
     expect(result).toContain('widgetType: empty');
@@ -181,7 +181,7 @@ describe('serializeDashFile', () => {
 
   it('should serialize settings correctly', () => {
     const dashFile: DashFile = {
-      version: 2,
+      version: 1,
       settings: {
         gutter: 8,
         showHeaders: false,
@@ -197,7 +197,7 @@ describe('serializeDashFile', () => {
 
   it('should round-trip through parse and serialize', () => {
     const original: DashFile = {
-      version: 2,
+      version: 1,
       settings: {
         gutter: 4,
         border: { width: 2, style: 'solid', color: '#000' },
@@ -238,7 +238,7 @@ describe('createEmptyDashFile', () => {
   it('should create a dashboard with one full-size tile', () => {
     const result = createEmptyDashFile();
 
-    expect(result.version).toBe(2);
+    expect(result.version).toBe(1);
     expect(result.tiles).toHaveLength(1);
     expect(result.tiles[0].x).toBe(0);
     expect(result.tiles[0].y).toBe(0);
@@ -259,7 +259,7 @@ describe('createEmptyDashFile', () => {
 describe('dashFileToSnapshot', () => {
   it('should convert a dashboard file to snapshot format', () => {
     const dashFile: DashFile = {
-      version: 2,
+      version: 1,
       tiles: [
         {
           id: 'tile-1' as TileId,
@@ -283,69 +283,31 @@ describe('dashFileToSnapshot', () => {
 
     const result = dashFileToSnapshot(dashFile);
 
-    expect(result.version).toBe(2);
+    expect(result.version).toBe(1);
     expect(result.tiles).toHaveLength(2);
     expect(result.tiles[0].id).toBe('tile-1');
     expect(result.tiles[1].locked).toBe(true);
     expect(result.tiles[1].meta?.contentRef).toBe('test.md');
   });
 
-  it('should include settings when present', () => {
-    const dashFile: DashFile = {
-      version: 2,
-      settings: {
-        gutter: 8,
-        border: { width: 2 },
-        animation: { enabled: false },
-      },
-      tiles: [],
-    };
-
-    const result = dashFileToSnapshot(dashFile);
-
-    expect(result.settings).toBeDefined();
-    expect(result.settings?.gutter).toBe(8);
-    expect(result.settings?.border?.width).toBe(2);
-    expect(result.settings?.animation?.enabled).toBe(false);
-  });
-
   it('should handle dashboard without settings', () => {
     const dashFile: DashFile = {
-      version: 2,
+      version: 1,
       tiles: [],
     };
 
     const result = dashFileToSnapshot(dashFile);
 
-    expect(result.settings).toBeUndefined();
-  });
-
-  it('should preserve constraints', () => {
-    const dashFile: DashFile = {
-      version: 2,
-      tiles: [
-        {
-          id: 'tile-1' as TileId,
-          x: 0,
-          y: 0,
-          width: 100,
-          height: 100,
-          constraints: { minWidth: 20, minHeight: 15 },
-        },
-      ],
-    };
-
-    const result = dashFileToSnapshot(dashFile);
-
-    expect(result.tiles[0].constraints?.minWidth).toBe(20);
-    expect(result.tiles[0].constraints?.minHeight).toBe(15);
+    // SnapshotV1 doesn't have settings field
+    expect(result.version).toBe(1);
+    expect(result.tiles).toEqual([]);
   });
 });
 
 describe('snapshotToDashFile', () => {
   it('should convert a snapshot to dashboard file format', () => {
     const snapshot: Snapshot = {
-      version: 2,
+      version: 1,
       tiles: [
         {
           id: 'tile-1' as TileId,
@@ -370,7 +332,7 @@ describe('snapshotToDashFile', () => {
 
     const result = snapshotToDashFile(snapshot);
 
-    expect(result.version).toBe(2);
+    expect(result.version).toBe(1);
     expect(result.tiles).toHaveLength(2);
     expect(result.tiles[0].id).toBe('tile-1');
     expect(result.tiles[1].locked).toBe(true);
@@ -378,7 +340,7 @@ describe('snapshotToDashFile', () => {
 
   it('should preserve existing settings', () => {
     const snapshot: Snapshot = {
-      version: 2,
+      version: 1,
       tiles: [],
     };
     const existingSettings = {
@@ -406,7 +368,7 @@ describe('snapshotToDashFile', () => {
 
   it('should round-trip with dashFileToSnapshot', () => {
     const original: DashFile = {
-      version: 2,
+      version: 1,
       settings: { gutter: 4 },
       tiles: [
         {
@@ -429,7 +391,7 @@ describe('snapshotToDashFile', () => {
     const snapshot = dashFileToSnapshot(original);
     const result = snapshotToDashFile(snapshot, original.settings);
 
-    expect(result.version).toBe(2);
+    expect(result.version).toBe(1);
     expect(result.settings?.gutter).toBe(4);
     expect(result.tiles[0].x).toBe(10);
     expect(result.tiles[0].locked).toBe(true);

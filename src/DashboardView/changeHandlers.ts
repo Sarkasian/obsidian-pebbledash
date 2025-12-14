@@ -3,8 +3,7 @@
  * Handles dashboard state changes and synchronization between model and file.
  */
 
-import type { DashFile, DashTile } from '../types';
-import type { Snapshot } from '@pebbledash/core';
+import type { DashFile, DashTile, Snapshot } from '../types';
 import { snapshotToDashFile } from '../yamlAdapter';
 
 /**

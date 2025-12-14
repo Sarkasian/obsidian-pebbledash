@@ -1,6 +1,8 @@
 import esbuild from "esbuild";
 import process from "process";
 import builtins from "builtin-modules";
+import { copyFileSync, mkdirSync, existsSync } from "fs";
+import { dirname } from "path";
 
 const banner =
 `/*
@@ -10,6 +12,16 @@ if you want to view the source, please visit the github repository of this plugi
 `;
 
 const prod = (process.argv[2] === "production");
+const release = (process.argv[2] === "release");
+
+// Determine output directory
+const outdir = release ? "dist" : ".";
+const outfile = `${outdir}/main.js`;
+
+// Ensure output directory exists for release builds
+if (release && !existsSync(outdir)) {
+	mkdirSync(outdir, { recursive: true });
+}
 
 const context = await esbuild.context({
 	banner: {
@@ -36,14 +48,32 @@ const context = await esbuild.context({
 	format: "cjs",
 	target: "es2018",
 	logLevel: "info",
-	sourcemap: prod ? false : "inline",
+	sourcemap: (prod || release) ? false : "inline",
 	treeShaking: true,
-	outfile: "main.js",
-	minify: prod,
+	outfile: outfile,
+	minify: prod || release,
 });
 
-if (prod) {
+if (prod || release) {
 	await context.rebuild();
+	
+	// For release builds, copy manifest.json and styles.css to dist/
+	if (release) {
+		console.log("Copying release assets to dist/...");
+		
+		// Copy manifest.json
+		copyFileSync("manifest.json", `${outdir}/manifest.json`);
+		console.log("  - manifest.json");
+		
+		// Copy styles.css if it exists
+		if (existsSync("styles.css")) {
+			copyFileSync("styles.css", `${outdir}/styles.css`);
+			console.log("  - styles.css");
+		}
+		
+		console.log("Release build complete!");
+	}
+	
 	process.exit(0);
 } else {
 	await context.watch();

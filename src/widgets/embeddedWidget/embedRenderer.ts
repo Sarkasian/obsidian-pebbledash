@@ -89,7 +89,7 @@ export async function renderUsingEmbed(ctx: EmbedRendererContext): Promise<void>
 
         // Load the embed
         if (typeof embed.loadFile === 'function') {
-          await embed.loadFile();
+          await embed.loadFile(currentFile);
         }
         if (typeof embed.load === 'function') {
           embed.load();

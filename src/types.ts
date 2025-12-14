@@ -1,4 +1,14 @@
-import type { TileId, Snapshot, TileSnapshot, PartialExtendedConfig } from '@pebbledash/core';
+import type { TileId, Tile, SnapshotV1, PartialExtendedConfig, TileConstraints } from '@pebbledash/core';
+
+/**
+ * Type alias for tile snapshot data (compatible with SnapshotV1 tiles)
+ */
+export type TileSnapshot = Pick<Tile, 'id' | 'x' | 'y' | 'width' | 'height' | 'locked' | 'meta'>;
+
+/**
+ * Type alias for Snapshot (compatible with pebbledash SnapshotV1)
+ */
+export type Snapshot = SnapshotV1;
 
 /**
  * Tile metadata specific to obsidian-pebbledash.
@@ -108,7 +118,7 @@ export interface DashFile {
   /** Dashboard-level settings */
   settings?: DashboardSettings;
   /** Pebbledash snapshot version */
-  version: 2;
+  version: 1;
   /** Tile definitions */
   tiles: DashTile[];
 }
@@ -116,9 +126,23 @@ export interface DashFile {
 /**
  * Tile definition in .dash file (extends pebbledash TileSnapshot)
  */
-export interface DashTile extends Omit<TileSnapshot, 'meta'> {
+export interface DashTile {
+  /** Tile unique identifier */
+  id: TileId;
+  /** X position (0-100 percent) */
+  x: number;
+  /** Y position (0-100 percent) */
+  y: number;
+  /** Width (0-100 percent) */
+  width: number;
+  /** Height (0-100 percent) */
+  height: number;
+  /** Whether tile is locked */
+  locked?: boolean;
   /** Tile metadata with obsidian-specific fields */
   meta?: ObsidianTileMeta;
+  /** Per-tile constraint overrides */
+  constraints?: TileConstraints;
 }
 
 /**
@@ -174,5 +198,5 @@ export type EditSubMode = 'insert' | 'resize';
 /**
  * Re-export pebbledash types for convenience
  */
-export type { TileId, Snapshot, TileSnapshot, PartialExtendedConfig };
+export type { TileId, PartialExtendedConfig, TileConstraints };
 

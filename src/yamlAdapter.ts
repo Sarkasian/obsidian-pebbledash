@@ -9,8 +9,8 @@
 
 import * as yaml from 'js-yaml';
 import type { Vault, TFile } from 'obsidian';
-import type { DashFile, DashTile } from './types';
-import type { Snapshot, SnapshotV2, TileSnapshot } from '@pebbledash/core';
+import type { DashFile, DashTile, Snapshot, TileSnapshot } from './types';
+import type { TileId } from '@pebbledash/core';
 
 /**
  * Parse a .dash file content string into a DashFile object.
@@ -37,7 +37,7 @@ export function parseDashFile(content: string): DashFile {
   
   // Ensure version is set
   if (!parsed.version) {
-    parsed.version = 2;
+    parsed.version = 1;
   }
   
   // Ensure tiles array exists
@@ -82,10 +82,10 @@ export function serializeDashFile(dashFile: DashFile): string {
  */
 export function createEmptyDashFile(): DashFile {
   return {
-    version: 2,
+    version: 1,
     tiles: [
       {
-        id: 'tile-1' as any,
+        id: 'tile-1' as TileId,
         x: 0,
         y: 0,
         width: 100,
@@ -99,13 +99,16 @@ export function createEmptyDashFile(): DashFile {
 }
 
 /**
- * Convert a DashFile to pebbledash's SnapshotV2 format.
+ * Convert a DashFile to pebbledash's SnapshotV1 format.
  * 
  * This is used when initializing the pebbledash model from a loaded dashboard file.
  * The snapshot can be passed to `DashboardModel.restoreSnapshot()`.
  * 
+ * Note: Dashboard-level settings are stored in the DashFile but not in the pebbledash
+ * snapshot (SnapshotV1 doesn't support settings). Use dashFile.settings directly for those.
+ * 
  * @param dashFile - The dashboard file to convert
- * @returns A SnapshotV2 object compatible with pebbledash
+ * @returns A Snapshot object compatible with pebbledash
  * 
  * @example
  * ```ts
@@ -114,54 +117,18 @@ export function createEmptyDashFile(): DashFile {
  * await model.restoreSnapshot(snapshot);
  * ```
  */
-export function dashFileToSnapshot(dashFile: DashFile): SnapshotV2 {
-  // Build settings object, only including fields that are fully specified
-  let settings: SnapshotV2['settings'] = undefined;
-  if (dashFile.settings) {
-    const s = dashFile.settings;
-    settings = {};
-    
-    if (s.gutter !== undefined) {
-      settings.gutter = s.gutter;
-    }
-    
-    // Only include border if all required fields are present
-    if (s.border && s.border.width !== undefined && s.border.style && s.border.color) {
-      settings.border = {
-        width: s.border.width,
-        style: s.border.style,
-        color: s.border.color,
-      };
-    }
-    
-    // Only include animation if all required fields are present
-    if (s.animation && s.animation.enabled !== undefined && s.animation.duration !== undefined) {
-      settings.animation = {
-        enabled: s.animation.enabled,
-        duration: s.animation.duration,
-        easing: 'ease-out', // Default easing since DashboardSettings doesn't include it
-      };
-    }
-    
-    // If no settings were actually set, don't include the settings object
-    if (Object.keys(settings).length === 0) {
-      settings = undefined;
-    }
-  }
-
+export function dashFileToSnapshot(dashFile: DashFile): Snapshot {
   return {
-    version: 2,
+    version: 1,
     tiles: dashFile.tiles.map(tile => ({
       id: tile.id,
       x: tile.x,
       y: tile.y,
       width: tile.width,
       height: tile.height,
-      locked: tile.locked,
+      locked: tile.locked ?? false,
       meta: tile.meta as Record<string, unknown>,
-      constraints: tile.constraints,
     })),
-    settings,
   };
 }
 
@@ -186,7 +153,7 @@ export function snapshotToDashFile(
   snapshot: Snapshot,
   existingSettings?: DashFile['settings']
 ): DashFile {
-  const tiles = snapshot.tiles.map((tile: TileSnapshot) => ({
+  const tiles = snapshot.tiles.map((tile) => ({
     id: tile.id,
     x: tile.x,
     y: tile.y,
@@ -194,12 +161,11 @@ export function snapshotToDashFile(
     height: tile.height,
     locked: tile.locked,
     meta: tile.meta as DashTile['meta'],
-    constraints: tile.constraints,
   }));
 
   return {
     settings: existingSettings,
-    version: 2,
+    version: 1,
     tiles,
   };
 }

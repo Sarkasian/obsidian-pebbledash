@@ -356,17 +356,8 @@ export class DashboardView extends TextFileView {
         overlays: true,
         keyboard: true,
         startMode: 'insert',
-        keyboardUndoRedo: true,
-      },
-      resizeConfig: {
-        redistributeEqually: this.effectiveDashboardConfig.redistributeEqually,
       },
       widgets: createPebbledashWidgetFactories(widgetBridgeCtx),
-      onTileContextMenu: (tileId, event) => {
-        this.handleTileContextMenu(tileId as unknown as TileId, event);
-      },
-      onHistoryChange: () => {},
-      onTileClick: () => {},
     });
 
     await this.dashboard.mount();

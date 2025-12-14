@@ -49,7 +49,7 @@ export class FileTracker {
    * Debounced handler for file modifications.
    * Groups rapid changes to the same file into a single callback.
    */
-  private debouncedModifyHandler: ReturnType<typeof debounce>;
+  private debouncedModifyHandler: (filePath: string) => void;
 
   constructor(vault: Vault) {
     this.vault = vault;

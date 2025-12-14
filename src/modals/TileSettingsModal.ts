@@ -115,7 +115,7 @@ export class TileSettingsModal extends Modal {
 
     createCascadeToggle(contentEl, {
       name: SHOW_HEADERS.name.replace('tile headers', 'header'),
-      desc: SHOW_HEADERS.desc,
+      desc: SHOW_HEADERS.description,
       currentValue: this.meta.showHeader,
       inheritedValue: inheritedShowHeaders,
       sourceLabel: showHeadersSource,
@@ -132,7 +132,7 @@ export class TileSettingsModal extends Modal {
 
     createCascadeToggle(contentEl, {
       name: SHOW_EMBED_LINK.name,
-      desc: SHOW_EMBED_LINK.desc,
+      desc: SHOW_EMBED_LINK.description,
       currentValue: this.meta.showEmbedLink,
       inheritedValue: inheritedShowEmbedLink,
       sourceLabel: showEmbedLinkSource,
@@ -168,7 +168,7 @@ export class TileSettingsModal extends Modal {
 
     createCascadeDropdown(contentEl, {
       name: LINK_BEHAVIOR.name,
-      desc: LINK_BEHAVIOR.desc,
+      desc: LINK_BEHAVIOR.description,
       options: LINK_BEHAVIOR.options,
       currentValue: this.meta.linkBehavior,
       inheritedValue: inheritedLinkBehavior,
@@ -186,7 +186,7 @@ export class TileSettingsModal extends Modal {
 
     createCascadeDropdown(contentEl, {
       name: SCROLL_BEHAVIOR.name,
-      desc: SCROLL_BEHAVIOR.desc,
+      desc: SCROLL_BEHAVIOR.description,
       options: SCROLL_BEHAVIOR.options,
       currentValue: this.meta.scrollBehavior,
       inheritedValue: inheritedScrollBehavior,
@@ -208,7 +208,7 @@ export class TileSettingsModal extends Modal {
 
       createCascadeToggle(contentEl, {
         name: 'Seamless nested dashboard',
-        desc: SEAMLESS_NESTED.desc,
+        desc: SEAMLESS_NESTED.description,
         currentValue: this.meta.seamlessNested,
         inheritedValue: inheritedSeamlessNested,
         sourceLabel: seamlessSource,
@@ -222,7 +222,7 @@ export class TileSettingsModal extends Modal {
 
     createSliderSetting(contentEl, {
       name: MIN_TILE_WIDTH.name,
-      desc: MIN_TILE_WIDTH.desc,
+      desc: MIN_TILE_WIDTH.description,
       min: MIN_TILE_WIDTH.min,
       max: MIN_TILE_WIDTH.max,
       step: MIN_TILE_WIDTH.step,
@@ -235,7 +235,7 @@ export class TileSettingsModal extends Modal {
 
     createSliderSetting(contentEl, {
       name: MIN_TILE_HEIGHT.name,
-      desc: MIN_TILE_HEIGHT.desc,
+      desc: MIN_TILE_HEIGHT.description,
       min: MIN_TILE_HEIGHT.min,
       max: MIN_TILE_HEIGHT.max,
       step: MIN_TILE_HEIGHT.step,
@@ -248,7 +248,7 @@ export class TileSettingsModal extends Modal {
 
     createSliderSetting(contentEl, {
       name: MAX_TILE_WIDTH.name,
-      desc: MAX_TILE_WIDTH.desc,
+      desc: MAX_TILE_WIDTH.description,
       min: MAX_TILE_WIDTH.min,
       max: MAX_TILE_WIDTH.max,
       step: MAX_TILE_WIDTH.step,
@@ -261,7 +261,7 @@ export class TileSettingsModal extends Modal {
 
     createSliderSetting(contentEl, {
       name: MAX_TILE_HEIGHT.name,
-      desc: MAX_TILE_HEIGHT.desc,
+      desc: MAX_TILE_HEIGHT.description,
       min: MAX_TILE_HEIGHT.min,
       max: MAX_TILE_HEIGHT.max,
       step: MAX_TILE_HEIGHT.step,

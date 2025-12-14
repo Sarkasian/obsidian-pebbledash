@@ -123,14 +123,16 @@ export async function createNativeEditor(ctx: EditModeContext): Promise<void> {
     onEmbedChange(embedView);
 
     // Make it editable and show the editor
-    embedView.editable = true;
+    // These are internal Obsidian APIs, cast to any for access
+    const editableEmbed = embedView as any;
+    editableEmbed.editable = true;
 
-    if (typeof embedView.showEditor === 'function') {
-      embedView.showEditor();
+    if (typeof editableEmbed.showEditor === 'function') {
+      editableEmbed.showEditor();
     }
 
-    if (typeof embedView.loadFile === 'function') {
-      await embedView.loadFile();
+    if (typeof editableEmbed.loadFile === 'function') {
+      await editableEmbed.loadFile(currentFile);
     }
 
   } catch (err) {
