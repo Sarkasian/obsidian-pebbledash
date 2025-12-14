@@ -1,3 +1,9 @@
+# AI Agent Instructions
+
+> **Note**: This file provides context and guidelines for AI coding assistants (like Cursor, GitHub Copilot, etc.) working on this codebase. It is not documentation for human contributors - see [CONTRIBUTING.md](CONTRIBUTING.md) and [README.md](README.md) instead.
+
+---
+
 # Obsidian community plugin
 
 ## Project overview

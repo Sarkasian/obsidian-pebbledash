@@ -1,0 +1,35 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "src/main.ts",
+    "src/types.ts",
+    "src/constants.ts",
+    "src/settingsResolver.ts",
+    "src/widgets/types.ts",
+    "src/widgets/index.ts"
+  ],
+  "out": "docs/api",
+  "name": "Pebbledash Dashboards for Obsidian",
+  "readme": "README.md",
+  "plugin": ["typedoc-plugin-markdown"],
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeInternal": true,
+  "skipErrorChecking": true,
+  "hideGenerator": true,
+  "navigationLinks": {
+    "README": "../../README.md",
+    "SPEC": "../../SPEC.md",
+    "SETTINGS": "../../SETTINGS.md",
+    "WIDGETS": "../../WIDGETS.md"
+  },
+  "categorizeByGroup": true,
+  "categoryOrder": [
+    "Plugin",
+    "Types",
+    "Settings",
+    "Widgets",
+    "*"
+  ]
+}
+
