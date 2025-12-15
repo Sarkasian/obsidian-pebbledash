@@ -1,14 +1,7 @@
-import type { TileId, Tile, SnapshotV1, PartialExtendedConfig, TileConstraints } from '@pebbledash/core';
+import type { TileId, SnapshotV1, Snapshot, TileSnapshot, PartialExtendedConfig, TileConstraints } from '@pebbledash/core';
 
-/**
- * Type alias for tile snapshot data (compatible with SnapshotV1 tiles)
- */
-export type TileSnapshot = Pick<Tile, 'id' | 'x' | 'y' | 'width' | 'height' | 'locked' | 'meta'>;
-
-/**
- * Type alias for Snapshot (compatible with pebbledash SnapshotV1)
- */
-export type Snapshot = SnapshotV1;
+// Re-export snapshot types from @pebbledash/core
+export type { Snapshot, SnapshotV1, TileSnapshot };
 
 /**
  * Tile metadata specific to obsidian-pebbledash.
