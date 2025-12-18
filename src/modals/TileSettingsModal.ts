@@ -17,7 +17,6 @@ import {
   SCROLL_BEHAVIOR,
   SEAMLESS_NESTED,
   getInheritedValue,
-  vaultDefaultDesc,
 } from '../settingDefinitions';
 import {
   createSliderSetting,

@@ -9,7 +9,7 @@
 
 import * as yaml from 'js-yaml';
 import type { Vault, TFile } from 'obsidian';
-import type { DashFile, DashTile, Snapshot, TileSnapshot } from './types';
+import type { DashFile, DashTile, Snapshot } from './types';
 import type { TileId } from '@pebbledash/core';
 
 /**

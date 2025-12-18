@@ -10,7 +10,7 @@ import {
   dashFileToSnapshot,
   snapshotToDashFile,
 } from '../yamlAdapter';
-import type { DashFile, DashTile, Snapshot } from '../types';
+import type { DashFile, Snapshot } from '../types';
 import type { TileId } from '@pebbledash/core';
 
 describe('parseDashFile', () => {

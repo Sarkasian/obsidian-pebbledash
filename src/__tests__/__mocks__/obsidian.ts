@@ -467,11 +467,11 @@ class MockHTMLElement {
     return this.classList.has(cls);
   }
   
-  addEventListener(_event: string, _callback: EventListener): void {
+  addEventListener(_event: string, _callback: (e: Event) => void): void {
     // Mock implementation
   }
   
-  removeEventListener(_event: string, _callback: EventListener): void {
+  removeEventListener(_event: string, _callback: (e: Event) => void): void {
     // Mock implementation
   }
   

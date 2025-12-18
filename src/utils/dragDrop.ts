@@ -87,7 +87,7 @@ export function setupDropZone(
               return;
             }
           }
-        } catch (err) {
+        } catch {
           // Failed to parse URL
         }
       } else {
@@ -119,7 +119,7 @@ export function setupDropZone(
         if (importedPath) {
           onFileDrop(importedPath);
         }
-      } catch (err) {
+      } catch {
         new Notice(`Failed to import file: ${externalFile.name}`);
       }
       return;
@@ -149,7 +149,6 @@ export function setupDropZone(
  * @returns The path of the imported file in the vault, or null if failed
  */
 async function importExternalFile(app: App, file: File): Promise<string | null> {
-  try {
     // Get the attachment folder path from Obsidian's config (types in obsidian-internal.d.ts)
     const attachmentFolder = app.vault.config?.attachmentFolderPath ?? '';
     
@@ -178,9 +177,6 @@ async function importExternalFile(app: App, file: File): Promise<string | null> 
     new Notice(`Imported: ${file.name}`);
     
     return targetPath;
-  } catch (err) {
-    throw err;
-  }
 }
 
 /**

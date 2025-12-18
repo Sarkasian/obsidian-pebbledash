@@ -4,7 +4,7 @@
  */
 
 import type { App, Component } from 'obsidian';
-import type { TileId, ObsidianTileMeta, PebbledashSettings, DashboardSettings, DashFile } from '../types';
+import type { TileId, ObsidianTileMeta, PebbledashSettings, DashFile } from '../types';
 import type { WidgetRegistry, Widget, WidgetContext } from '../widgets';
 import { getWidgetFactory } from '../widgets';
 import { resolveEffectiveTileSettings } from '../settingsResolver';

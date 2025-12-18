@@ -9,7 +9,6 @@
  */
 
 import { TFile, TAbstractFile, Vault, EventRef, debounce } from 'obsidian';
-import type { DashFile } from './types';
 import { parseDashFile, serializeDashFile } from './yamlAdapter';
 import { DASH_EXTENSION } from './constants';
 

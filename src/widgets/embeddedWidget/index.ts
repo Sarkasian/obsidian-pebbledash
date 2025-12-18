@@ -222,6 +222,10 @@ export function createEmbeddedLeafWidget(ctx: WidgetContext): Widget {
 
       currentFile = file;
 
+      // Store source file path on container for embedded scripts (e.g., Meta Bind)
+      // This allows scripts to find the correct file context instead of using getActiveFile()
+      container.dataset.pebbledashSourcePath = currentFile.path;
+
       // Handle seamless nested dashboards
       const isDashFile = currentFile.extension.toLowerCase() === 'dash';
       if (tileContent) {

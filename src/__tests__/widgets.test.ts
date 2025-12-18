@@ -105,7 +105,7 @@ describe('Widget Interface Types', () => {
   });
 
   it('should define a valid widget factory signature', () => {
-    const factory: WidgetFactory = (ctx: WidgetContext) => ({
+    const factory: WidgetFactory = (_ctx: WidgetContext) => ({
       mount: () => {},
       unmount: () => {},
     });
@@ -114,7 +114,7 @@ describe('Widget Interface Types', () => {
   });
 
   it('should define a valid widget registry structure', () => {
-    const mockFactory: WidgetFactory = (ctx) => ({
+    const mockFactory: WidgetFactory = (_ctx) => ({
       mount: () => {},
       unmount: () => {},
     });

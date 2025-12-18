@@ -171,7 +171,7 @@ class DashEmbedComponent extends Component implements EmbedComponent {
   /**
    * Create widget factories for the nested dashboard.
    */
-  private createNestedWidgetFactories(dashFile: any, newDepth: number): Record<string, (ctx: any) => any> {
+  private createNestedWidgetFactories(dashFile: any, _newDepth: number): Record<string, (ctx: any) => any> {
     const nestedWidgets = this.nestedWidgets;
     const plugin = this.plugin;
     const app = this.app;

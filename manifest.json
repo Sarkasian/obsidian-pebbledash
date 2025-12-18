@@ -1,7 +1,7 @@
 {
 	"id": "obsidian-pebbledash",
 	"name": "Obsidian Pebbledash",
-	"version": "1.0.0",
+	"version": "1.0.2",
 	"minAppVersion": "1.0.0",
 	"description": "Create beautiful dashboards to display your vault content in resizable tiles",
 	"author": "Pebbledash Contributors",

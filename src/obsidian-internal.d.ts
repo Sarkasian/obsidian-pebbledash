@@ -7,7 +7,7 @@
  * @see https://github.com/obsidianmd/obsidian-api for official types
  */
 
-import type { App, Vault, TFile, Component } from 'obsidian';
+import type { App, TFile, Component } from 'obsidian';
 
 /**
  * Extended App interface with internal APIs

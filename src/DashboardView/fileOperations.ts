@@ -81,7 +81,7 @@ export async function setTileContent(
       // Set flag to skip setViewData refresh since we're saving ourselves
       ctx.skipNextRefresh = true;
       await ctx.app.vault.modify(ctx.file, yaml);
-    } catch (error) {
+    } catch {
       new Notice('Failed to save dashboard');
     }
   }
@@ -91,7 +91,7 @@ export async function setTileContent(
     try {
       const model = ctx.dashboard.getModel();
       await model.updateTile(tileId, { meta: newMeta as any });
-    } catch (error) {
+    } catch {
       // Non-critical - model update failed but file is saved
     }
   }

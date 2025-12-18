@@ -13,7 +13,7 @@ import { CSS } from '../constants';
  */
 export function createTileHeader(
   contentRef: string | undefined,
-  tileId: string
+  _tileId: string
 ): HTMLElement {
   const header = document.createElement('div');
   header.className = CSS.tileHeader;
