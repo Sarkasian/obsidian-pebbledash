@@ -1,4 +1,5 @@
 import type { PebbledashSettings } from './types';
+import { DEFAULT_INTERACTIVE_SELECTORS } from './settingDefinitions';
 
 /**
  * Plugin ID
@@ -36,6 +37,7 @@ export const DEFAULT_SETTINGS: PebbledashSettings = {
   seamlessNested: true,  // Nested dashboards have borders by default
   showEmbedLink: false,  // Hide embed link button by default
   redistributeEqually: false,  // First tile shrinks to minimum before chain continues
+  interactiveSelectors: DEFAULT_INTERACTIVE_SELECTORS, // CSS selectors for interactive elements in embeds
 };
 
 /**

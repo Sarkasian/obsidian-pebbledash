@@ -176,6 +176,8 @@ export interface PebbledashSettings {
   showEmbedLink: boolean;
   /** Whether to redistribute equally when using Shift+drag (applies to all tiles proportionally) */
   redistributeEqually: boolean;
+  /** CSS selectors for interactive elements that should receive clicks in the embedded content */
+  interactiveSelectors: string;
 }
 
 /**

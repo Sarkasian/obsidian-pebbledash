@@ -20,6 +20,7 @@ import {
   ANIMATION_DURATION,
   SEAMLESS_NESTED,
   REDISTRIBUTE_EQUALLY,
+  INTERACTIVE_SELECTORS,
 } from './settingDefinitions';
 
 /**
@@ -262,5 +263,47 @@ export class PebbledashSettingTab extends PluginSettingTab {
           this.plugin.settings.redistributeEqually = value;
           await this.plugin.saveSettings();
         }));
+
+  // Advanced section
+  containerEl.createEl('h3', { text: 'Advanced' });
+
+  // Create textarea first so it can be referenced in reset button
+  const textareaContainer = containerEl.createDiv({ cls: 'pebbledash-textarea-container' });
+  const textareaEl = textareaContainer.createEl('textarea', {
+    cls: 'pebbledash-interactive-selectors',
+    placeholder: INTERACTIVE_SELECTORS.placeholder ?? '',
+  });
+
+  // Interactive selectors - header with reset button (inserted before textarea)
+  const settingsEl = new Setting(containerEl)
+    .setName(INTERACTIVE_SELECTORS.name)
+    .setDesc(INTERACTIVE_SELECTORS.description)
+    .addButton(button => button
+      .setButtonText('Reset to default')
+      .onClick(async () => {
+        this.plugin.settings.interactiveSelectors = DEFAULT_SETTINGS.interactiveSelectors;
+        textareaEl.value = DEFAULT_SETTINGS.interactiveSelectors;
+        await this.plugin.saveSettings();
+      }));
+
+  // Move the setting before the textarea container
+  containerEl.insertBefore(settingsEl.settingEl, textareaContainer);
+
+  // Style the textarea container
+  textareaEl.value = this.plugin.settings.interactiveSelectors;
+  textareaEl.rows = 6;
+  textareaEl.style.width = '100%';
+  textareaEl.style.fontFamily = 'monospace';
+  textareaEl.style.fontSize = '12px';
+  textareaEl.style.padding = '8px';
+  textareaEl.style.borderRadius = '4px';
+  textareaEl.style.border = '1px solid var (--background-modifier-border)';
+  textareaEl.style.backgroundColor = 'var(--text-normal)';
+  textareaEl.style.resize = 'vertical';
+
+  textareaEl.addEventListener('change', async () => {
+    this.plugin.settings.interactiveSelectors = textareaEl.value || DEFAULT_SETTINGS.interactiveSelectors;
+    await this.plugin.saveSettings();
+  });
   }
 }

@@ -14,6 +14,7 @@
 import { TFile } from 'obsidian';
 import type { Widget, WidgetContext } from '../types';
 import { CSS } from '../../constants';
+import { DEFAULT_INTERACTIVE_SELECTORS } from '../../settingDefinitions'; 
 import { setupDropZone } from '../../utils/dragDrop';
 import { applyTileStyles } from '../../settingsResolver';
 import { createTileHeader } from '../helpers';
@@ -32,7 +33,7 @@ import type { LinkHandlerContext } from './linkHandler';
  * Creates an embedded widget that uses Obsidian's native embedRegistry.
  */
 export function createEmbeddedLeafWidget(ctx: WidgetContext): Widget {
-  const { tileId, element, meta, app, effectiveSettings } = ctx;
+  const { tileId, element, meta, app, settings, effectiveSettings } = ctx;
   const contentRef = meta.contentRef;
 
   // DOM elements
@@ -93,6 +94,9 @@ export function createEmbeddedLeafWidget(ctx: WidgetContext): Widget {
     if (!container || !contentWrapper || !currentFile) return;
 
     // Intercept clicks on content wrapper to prevent Obsidian's native click-to-edit
+    // Use configurable selectors from settings, with fallback to default
+    const interactiveSelectors = settings.interactiveSelectors?.trim() || DEFAULT_INTERACTIVE_SELECTORS
+
     contentWrapper.addEventListener('click', (e) => {
       if (!currentFile || editModeState.isEditing) return;
 
@@ -100,7 +104,7 @@ export function createEmbeddedLeafWidget(ctx: WidgetContext): Widget {
       if (ext !== 'md') return;
 
       const target = e.target as HTMLElement;
-      if (target.closest('a')) return;
+      if (target.closest(interactiveSelectors)) return;
 
       e.preventDefault();
       e.stopPropagation();

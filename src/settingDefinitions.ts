@@ -54,6 +54,15 @@ export interface TextSettingDefinition extends SettingDefinition<string> {
   placeholder?: string;
 }
 
+/*
+ * Text area setting (multi-line text input)
+ */
+export interface TextAreaSettingDefinition extends SettingDefinition<string> {
+  type: 'textarea';
+  placeholder?: string;
+  rows?: number;
+}
+
 // ============================================
 // Layout Settings
 // ============================================
@@ -241,6 +250,38 @@ export const REDISTRIBUTE_EQUALLY: BooleanSettingDefinition = {
 };
 
 // ============================================
+// Advanced Settings
+// ============================================
+
+/*
+ * Default CSS selectors for interactive elements that should receive clicks
+ * within embedded content. This comprehensive list covers:
+ * - Standard HTML interactive elements (links, buttons, form controls)
+ * - Obsidian-specific interactive classes
+ * - General focusable/editable content
+ */
+export const DEFAULT_INTERACTIVE_SELECTORS = [
+  // Standard HTML interactive elements
+  'a', 'button', 'input', 'textarea', 'select',
+  // ARIA roles
+  '[role="button"]', '[role="link"]', '[role="checkbox"]', '[role="menuitem"]', '[role="tab"]',
+  // Obsidian-specifc classes
+  '.clickable-item', '.internal-link', '.external-link', '.tag', '.task-list-item-checkbox',
+  // General focusable/editable content
+  '[contenteditable]', '[tabindex]:not([tabindex="-1"])', 'details', 'summary', 'label',
+].join(', ');
+
+export const INTERACTIVE_SELECTORS: TextAreaSettingDefinition = {
+  type: 'textarea',
+  name: 'Interactive element selectors',
+  description: 'CSS selectors for elements that should remain clickable within embedded content. Separate multiple selectors with commas. Changes take effect on next embed render.',
+  defaultValue: DEFAULT_INTERACTIVE_SELECTORS,
+  placeholder: 'a, button, input, ...',
+  rows: 4,
+};
+
+
+// ============================================
 // Helper Functions
 // ============================================
 
@@ -314,11 +355,16 @@ export const ANIMATION_SETTINGS = {
   duration: ANIMATION_DURATION,
 } as const;
 
+export const ADVANCED_SETTINGS = {
+  interactiveSelectors: INTERACTIVE_SELECTORS,
+} as const;
+
 export const ALL_SETTINGS = {
   ...LAYOUT_SETTINGS,
   ...BORDER_SETTINGS,
   ...BEHAVIOR_SETTINGS,
   ...ANIMATION_SETTINGS,
+  ...ADVANCED_SETTINGS,
   seamlessNested: SEAMLESS_NESTED,
   redistributeEqually: REDISTRIBUTE_EQUALLY,
 } as const;
